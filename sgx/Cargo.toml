@@ -1,0 +1,55 @@
+[package]
+name = "sgx"
+version = "1.0.0"
+edition = "2021"
+build = "build.rs"
+
+[build-dependencies]
+cc = "1.0"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+# HMAC verification in SGX
+hmac = { version = "0.12", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+# Hex encoding for chain state
+hex = { version = "0.4", default-features = false, features = ["alloc"] }
+# ED25519 signature verification (compact and secure)
+ed25519-dalek = { version = "2.0", default-features = false, features = ["alloc"] }
+# mbedtls for TLS inside SGX (optional)
+mbedtls = { version = "0.12", features = ["std", "ssl", "x509", "rdrand"], optional = true }
+
+# Fortanix SGX SDK for real enclave execution
+[target.'cfg(target_env = "sgx")'.dependencies]
+# SGX-ported standard library is automatically used when compiling for x86_64-fortanix-unknown-sgx
+# rdrand provides hardware random number generation inside SGX
+rdrand = "0.8"
+# AES-GCM for sealing data (SGX-compatible)
+aes-gcm = { version = "0.10", default-features = false, features = ["aes", "alloc"] }
+
+[features]
+use_mbedtls = ["mbedtls"]
+# SGX features are automatically enabled when building for x86_64-fortanix-unknown-sgx target
+
+
+# Library target: contains your ECALLs
+[lib]
+path = "src/lib.rs"
+crate-type = ["rlib"]   # default and OK
+
+# Binary target: needed to produce an ELF file
+[[bin]]
+name = "sgx"
+path = "src/main.rs"
+
+# Simple test binary for debugging
+[[bin]]
+name = "sgx_simple"
+path = "src/main_simple.rs"
+
+# Minimal test binary for I/O debugging
+[[bin]]
+name = "test_enclave"
+path = "src/bin/test_enclave.rs"
+
