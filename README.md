@@ -1,44 +1,6 @@
 # Verifiable Power Metrics Architecture (VPMA)
 
-This artifact contains the VPMA energy monitoring stack with SGX-based attestation, eBPF kernel-side integrity guards, TPM boot verification, and evaluation script.
-
----
-
-## Repository Structure
-
-```
-.
-├── src/
-│   ├── main.rs                 # Entry point, TPM + hash verification
-│   ├── sensors/
-│   │   ├── powercap_rapl.rs    # RAPL sensor + eBPF guard
-│   │   ├── ebpf_rapl_hash.c    # Kernel-side eBPF probe
-│   │   ├── memory_protection.rs
-│   │   └── hash_verifier.rs
-│   └── exporters/
-│       ├── export_vm.rs        # SGX-attested VM energy export
-│       ├── db.rs               # VM-side DB exporter
-│       └── qemu.rs             # QEMU host exporter
-├── sgx/src/
-│   ├── lib.rs                  # ECALLs: energy computation, chain verification
-│   └── main.rs                 # Enclave entry, TLS server
-├── sgx_vm/src/
-│   ├── lib.rs                  # ECALLs: per-process energy, chain verification
-│   ├── main.rs                 # Enclave entry
-│   ├── blockchain.rs           # HMAC hash chain
-│   ├── merkle.rs               # Merkle tree for energy records
-│   ├── checkpoint.rs           # Sealed storage (SGX sealing)
-│   ├── redis_store.rs
-│   └── postgres.rs
-├── filemonitor_scaphandre.c    # eBPF host-side file access guard
-├── filemonitor_vm.c            # eBPF VM-side file access guard
-├── scripts/
-│   ├── attack_demo.sh          # Security evaluation script (attacks 1-11, 15)
-│   ├── register_binary_hash.sh # Register binary hash + PCR values in ImmuDB
-│   ├── power_overhead_test.sh  # Power overhead measurement via turbostat
-│   └── verify_redis_data.py    # Offline Merkle verification of Redis records
-└── Cargo.toml
-```
+This artifact contains the VPMA energy monitoring stack with SGX-based attestation, eBPF kernel-side integrity guards, TPM boot verification, and evaluation scripts.
 
 ---
 
